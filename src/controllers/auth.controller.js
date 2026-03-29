@@ -66,7 +66,7 @@ const login = asyncHandler(async (req, res) => {
 
   res.status(200)
   .cookie("token", token, {
-      maxAge: 1 * 24 * 60 * 60 * 1000,
+      // Removed maxAge for session-only cookies (expires when browser closes)
       httpOnly: true,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       secure: process.env.NODE_ENV === "production",
