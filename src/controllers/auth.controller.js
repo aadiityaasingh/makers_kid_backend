@@ -4,6 +4,41 @@ const jwt = require("jsonwebtoken");
 const asyncHandler = require("../utils/asyncHandler.js");
 const AppError = require("../utils/AppError.js");
 
+
+const register = asyncHandler(async (req, res) => {
+
+  const {name, email, password} = req.body;
+
+  try {
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await userModel.create({
+      name,
+      email,
+      password: hashedPassword
+    });
+
+    res.status(201).json({
+      success: true,
+      data: {
+        id: user._id,
+        name: user.name,
+        email: user.email
+      }
+    });
+
+  } catch (error) {
+
+    if (error.code === 11000) {
+      throw new AppError("User already exists", 400);
+    }
+
+    throw error;
+  }
+
+});
+
 const login = asyncHandler(async (req, res) => {
 
   const {email, password} = req.body;
@@ -56,5 +91,5 @@ const logout = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-  login,logout
+  register, login,logout
 };
